@@ -1,0 +1,727 @@
+> print("Descriptive Statistics")
+[1] "Descriptive Statistics"
+> describe(x = Example2[, c("ageT0", "tvage", "time", "recall")])
+       vars   n  mean   sd median trimmed  mad   min   max range  skew kurtosis   se
+ageT0     1 557 82.97 2.69  82.25   82.64 2.24 79.42 97.78 18.36  1.23     1.84 0.11
+tvage     2 557 85.65 3.56  85.26   85.45 3.92 79.42 99.90 20.48  0.50    -0.16 0.15
+time      3 557  2.67 2.60   2.09    2.37 3.09  0.00  8.50  8.50  0.64    -0.72 0.11
+recall    4 557 10.19 3.83  11.00   10.49 2.97  0.00 16.00 16.00 -0.66    -0.32 0.16
+> corr.test(x = Example2[, c("ageT0", "tvage", "time", "recall")])
+Call:corr.test(x = Example2[, c("ageT0", "tvage", "time", "recall")])
+Correlation matrix 
+       ageT0 tvage  time recall
+ageT0   1.00  0.69 -0.10  -0.12
+tvage   0.69  1.00  0.66  -0.06
+time   -0.10  0.66  1.00   0.04
+recall -0.12 -0.06  0.04   1.00
+Sample Size 
+[1] 557
+Probability values (Entries above the diagonal are adjusted for multiple tests.) 
+       ageT0 tvage time recall
+ageT0   0.00  0.00 0.07   0.01
+tvage   0.00  0.00 0.00   0.27
+time    0.02  0.00 0.00   0.34
+recall  0.00  0.14 0.34   0.00
+
+ To see confidence intervals of the correlations, print with the short=FALSE option
+
+   
+
+> print("Empty Means, Random Intercept Model for Age")
+[1] "Empty Means, Random Intercept Model for Age"
+> Age = lmer(data = Example2, REML = FALSE, formula = tvage ~ 1 + 
++ (1 | PersonID))
+> summary(Age)
+Linear mixed model fit by maximum likelihood . t-tests use Satterthwaite's method ['lmerModLmerTest']
+Formula: tvage ~ 1 + (1 | PersonID)
+   Data: Example2
+
+     AIC      BIC   logLik deviance df.resid 
+  2926.4   2939.4  -1460.2   2920.4      554 
+
+Scaled residuals: 
+      Min        1Q    Median        3Q       Max 
+-1.636848 -0.720932 -0.051256  0.681832  3.141743 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ PersonID (Intercept) 5.0911   2.2564  
+ Residual             7.7728   2.7880  
+Number of obs: 557, groups:  PersonID, 207
+
+Fixed effects:
+             Estimate Std. Error        df t value  Pr(>|t|)
+(Intercept)  85.40236    0.20407 185.73361  418.49 < 2.2e-16
+> icc(Age)
+# Intraclass Correlation Coefficient
+
+    Adjusted ICC: 0.396
+  Unadjusted ICC: 0.396
+> print("Does the random intercept improve model fit?")
+[1] "Does the random intercept improve model fit?"
+> ranova(Age, reduce.term = TRUE)
+ANOVA-like table for random-effects: Single term deletions
+
+Model:
+tvage ~ (1 | PersonID)
+               npar   logLik     AIC     LRT Df Pr(>Chisq)
+<none>            3 -1460.21 2926.43                      
+(1 | PersonID)    2 -1496.68 2997.36 72.9318  1 < 2.22e-16
+
+   
+
+> print("Empty Means, Random Intercept Model for Time")
+[1] "Empty Means, Random Intercept Model for Time"
+> Time = lmer(data = Example2, REML = FALSE, formula = time ~ 1 + 
++ (1 | PersonID))
+> summary(Time)
+Linear mixed model fit by maximum likelihood . t-tests use Satterthwaite's method ['lmerModLmerTest']
+Formula: time ~ 1 + (1 | PersonID)
+   Data: Example2
+
+     AIC      BIC   logLik deviance df.resid 
+  2651.5   2664.4  -1322.7   2645.5      554 
+
+Scaled residuals: 
+     Min       1Q   Median       3Q      Max 
+-1.02824 -1.02824 -0.22648  0.56545  2.24108 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ PersonID (Intercept) 0.000    0.0000  
+ Residual             6.764    2.6008  
+Number of obs: 557, groups:  PersonID, 207
+
+Fixed effects:
+            Estimate Std. Error       df t value  Pr(>|t|)
+(Intercept)   2.6742     0.1102 557.0000  24.267 < 2.2e-16
+optimizer (nloptwrap) convergence code: 0 (OK)
+boundary (singular) fit: see help('isSingular')
+
+> icc(Time)
+[1] NA
+> print("Does the random intercept improve model fit?")
+[1] "Does the random intercept improve model fit?"
+> ranova(Time, reduce.term = TRUE)
+ANOVA-like table for random-effects: Single term deletions
+
+Model:
+time ~ (1 | PersonID)
+               npar   logLik     AIC                  LRT Df Pr(>Chisq)
+<none>            3 -1322.73 2651.46                                   
+(1 | PersonID)    2 -1322.73 2649.46 -0.00000000000227374  1          1
+
+   
+
+> print("Model 0: Empty Means, Random Intercept Model for Recall Outcome")
+[1] "Model 0: Empty Means, Random Intercept Model for Recall Outcome"
+> Empty = lmer(data = Example2, REML = FALSE, formula = recall ~ 
++ 1 + (1 | PersonID))
+> llikAIC(Empty)
+$logLik
+'log Lik.' -1428.6775 (df=3)
+
+$AICtab
+       AIC        BIC     logLik   deviance   df.resid 
+ 2863.3550  2876.3227 -1428.6775  2857.3550   554.0000 
+
+> summary(Empty)
+Linear mixed model fit by maximum likelihood . t-tests use Satterthwaite's method ['lmerModLmerTest']
+Formula: recall ~ 1 + (1 | PersonID)
+   Data: Example2
+
+     AIC      BIC   logLik deviance df.resid 
+  2863.4   2876.3  -1428.7   2857.4      554 
+
+Scaled residuals: 
+     Min       1Q   Median       3Q      Max 
+-4.27016 -0.52513  0.03856  0.56918  2.93149 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ PersonID (Intercept) 10.4579  3.2339  
+ Residual              5.1646  2.2726  
+Number of obs: 557, groups:  PersonID, 207
+
+Fixed effects:
+             Estimate Std. Error        df t value  Pr(>|t|)
+(Intercept)   9.73491    0.25058 197.01209   38.85 < 2.2e-16
+> icc(Empty)
+# Intraclass Correlation Coefficient
+
+    Adjusted ICC: 0.669
+  Unadjusted ICC: 0.669
+> print("Does the random intercept improve model fit?")
+[1] "Does the random intercept improve model fit?"
+> ranova(Empty, reduce.term = TRUE)
+ANOVA-like table for random-effects: Single term deletions
+
+Model:
+recall ~ (1 | PersonID)
+               npar   logLik     AIC     LRT Df Pr(>Chisq)
+<none>            3 -1428.68 2863.36                      
+(1 | PersonID)    2 -1537.32 3078.63 217.278  1 < 2.22e-16
+
+   
+
+> print("Saturated Means by Rounded Age, Random Intercept Model")
+[1] "Saturated Means by Rounded Age, Random Intercept Model"
+> SatAge = lmer(data = Example2, REML = FALSE, formula = recall ~ 
++ 0 + as.factor(roundage) + (1 | PersonID))
+> summary(SatAge)
+Linear mixed model fit by maximum likelihood . t-tests use Satterthwaite's method ['lmerModLmerTest']
+Formula: recall ~ 0 + as.factor(roundage) + (1 | PersonID)
+   Data: Example2
+
+     AIC      BIC   logLik deviance df.resid 
+  2868.2   2950.3  -1415.1   2830.2      538 
+
+Scaled residuals: 
+     Min       1Q   Median       3Q      Max 
+-3.71618 -0.53462  0.04164  0.54316  2.91885 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ PersonID (Intercept) 10.474   3.2364  
+ Residual              4.813   2.1939  
+Number of obs: 557, groups:  PersonID, 207
+
+Fixed effects:
+                       Estimate Std. Error        df t value  Pr(>|t|)
+as.factor(roundage)79  13.49127    1.74331 383.62632  7.7389 8.976e-14
+as.factor(roundage)80  10.45038    0.61189 553.67031 17.0788 < 2.2e-16
+as.factor(roundage)81   9.74457    0.44979 528.74000 21.6647 < 2.2e-16
+as.factor(roundage)82  10.13381    0.48412 542.80387 20.9326 < 2.2e-16
+as.factor(roundage)83   9.88202    0.42836 514.10483 23.0697 < 2.2e-16
+as.factor(roundage)84   9.84992    0.42429 520.78347 23.2153 < 2.2e-16
+as.factor(roundage)85   9.60931    0.43440 524.63434 22.1208 < 2.2e-16
+as.factor(roundage)86   9.98022    0.45565 533.37155 21.9034 < 2.2e-16
+as.factor(roundage)87   9.87311    0.43439 535.89060 22.7287 < 2.2e-16
+as.factor(roundage)88   9.57809    0.49835 554.59704 19.2195 < 2.2e-16
+as.factor(roundage)89   8.96923    0.45841 546.39066 19.5658 < 2.2e-16
+as.factor(roundage)90   9.62768    0.59075 554.79330 16.2973 < 2.2e-16
+as.factor(roundage)91   7.69222    0.63175 531.00256 12.1761 < 2.2e-16
+as.factor(roundage)92   9.51888    0.72131 508.62321 13.1966 < 2.2e-16
+as.factor(roundage)93   7.78784    0.99045 492.22738  7.8630 2.389e-14
+as.factor(roundage)94  10.49487    1.15932 426.73047  9.0526 < 2.2e-16
+as.factor(roundage)95  10.73985    1.21919 514.68243  8.8090 < 2.2e-16
+> SumSatAge = summary(SatAge)
+> AgeMeans = data.frame(SumSatAge$coefficients)
+> AgeMeans$LCI = AgeMeans$Estimate - 1.96 * AgeMeans$Std..Error
+> AgeMeans$UCI = AgeMeans$Estimate + 1.96 * AgeMeans$Std..Error
+> AgeMeans$age = as.numeric(substr(x = rownames(AgeMeans), start = 20, 
++ stop = 21))
+> AgeMeans
+                        Estimate Std..Error        df    t.value      Pr...t..        LCI        UCI age
+as.factor(roundage)79 13.4912744 1.74331418 383.62632  7.7388658 8.9758011e-14 10.0743787 16.9081702  79
+as.factor(roundage)80 10.4503832 0.61189242 553.67031 17.0787917 7.5979872e-53  9.2510740 11.6496923  80
+as.factor(roundage)81  9.7445699 0.44979047 528.74000 21.6646875 5.6894301e-75  8.8629806 10.6261592  81
+as.factor(roundage)82 10.1338129 0.48411578 542.80387 20.9326224 8.9876651e-72  9.1849459 11.0826798  82
+as.factor(roundage)83  9.8820236 0.42835578 514.10483 23.0696632 2.3074206e-81  9.0424463 10.7216010  83
+as.factor(roundage)84  9.8499192 0.42428564 520.78347 23.2153020 2.2298548e-82  9.0183193 10.6815190  84
+as.factor(roundage)85  9.6093108 0.43440139 524.63434 22.1208103 4.2939864e-77  8.7578841 10.4607375  85
+as.factor(roundage)86  9.9802208 0.45564769 533.37155 21.9033717 2.4640758e-76  9.0871513 10.8732902  86
+as.factor(roundage)87  9.8731092 0.43438942 535.89060 22.7287058 1.3980111e-80  9.0217060 10.7245125  87
+as.factor(roundage)88  9.5780940 0.49835223 554.59704 19.2195268 1.7939403e-63  8.6013236 10.5548643  88
+as.factor(roundage)89  8.9692292 0.45841263 546.39066 19.5658422 5.2762089e-65  8.0707405  9.8677180  89
+as.factor(roundage)90  9.6276836 0.59075445 554.79330 16.2972679 4.4223881e-49  8.4698049 10.7855624  90
+as.factor(roundage)91  7.6922198 0.63174736 531.00256 12.1761011 2.9803805e-30  6.4539949  8.9304446  91
+as.factor(roundage)92  9.5188775 0.72131141 508.62321 13.1966268 2.0948627e-34  8.1051071 10.9326478  92
+as.factor(roundage)93  7.7878422 0.99044645 492.22738  7.8629614 2.3894650e-14  5.8465671  9.7291172  93
+as.factor(roundage)94 10.4948664 1.15931693 426.73047  9.0526293 5.0116446e-18  8.2226052 12.7671275  94
+as.factor(roundage)95 10.7398514 1.21918581 514.68243  8.8090357 1.9361639e-17  8.3502472 13.1294556  95
+> png(file = "R Plots/R Recall by Age.png")
+> plot(x = AgeMeans$age, y = AgeMeans$Estimate, type = "l", ylim = c(min(AgeMeans$LCI), 
++ max(AgeMeans$UCI)), xlab = "Rounded Age in Years", ylab = "Predicted Recall")
+> estimate = 1
+> for (estimate in 1:nrow(AgeMeans)) {
++ points(x = AgeMeans$age[estimate], y = AgeMeans$Estimate[estimate])
++ lines(x = c(AgeMeans$age[estimate], AgeMeans$age[estimate]), 
++ 
++ y = c(AgeMeans$LCI[estimate], AgeMeans$UCI[estimate]))
++ }
+> dev.off()
+null device 
+          1 
+
+   
+
+> print("Saturated Means by Rounded Occasion, Random Intercept Model")
+[1] "Saturated Means by Rounded Occasion, Random Intercept Model"
+> SatTim = lmer(data = Example2, REML = FALSE, formula = recall ~ 
++ 0 + as.factor(occasion) + (1 | PersonID))
+> summary(SatTim)
+Linear mixed model fit by maximum likelihood . t-tests use Satterthwaite's method ['lmerModLmerTest']
+Formula: recall ~ 0 + as.factor(occasion) + (1 | PersonID)
+   Data: Example2
+
+     AIC      BIC   logLik deviance df.resid 
+  2855.4   2885.7  -1420.7   2841.4      550 
+
+Scaled residuals: 
+     Min       1Q   Median       3Q      Max 
+-3.87176 -0.52400  0.04445  0.54198  2.82091 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ PersonID (Intercept) 10.644   3.2624  
+ Residual              4.920   2.2181  
+Number of obs: 557, groups:  PersonID, 207
+
+Fixed effects:
+                      Estimate Std. Error        df t value  Pr(>|t|)
+as.factor(occasion)0   9.67672    0.27764 291.63943  34.854 < 2.2e-16
+as.factor(occasion)2   9.99664    0.30297 364.82444  32.995 < 2.2e-16
+as.factor(occasion)4   9.75620    0.33465 453.18063  29.154 < 2.2e-16
+as.factor(occasion)6   9.95687    0.38183 535.05981  26.077 < 2.2e-16
+as.factor(occasion)8   8.46175    0.42751 556.91706  19.793 < 2.2e-16
+
+Correlation of Fixed Effects:
+            as.()0 as.()2 as.()4 as.()6
+as.fctr(c)2 0.605                      
+as.fctr(c)4 0.554  0.558               
+as.fctr(c)6 0.488  0.491  0.491        
+as.fctr(c)8 0.437  0.440  0.438  0.422 
+> SumSatTim = summary(SatTim)
+> TimMeans = data.frame(SumSatTim$coefficients)
+> TimMeans$LCI = TimMeans$Estimate - 1.96 * TimMeans$Std..Error
+> TimMeans$UCI = TimMeans$Estimate + 1.96 * TimMeans$Std..Error
+> TimMeans$Tim = as.numeric(substr(x = rownames(TimMeans), start = 20, 
++ stop = 20))
+> TimMeans
+                      Estimate Std..Error        df   t.value       Pr...t..       LCI        UCI Tim
+as.factor(occasion)0 9.6767170 0.27763917 291.63943 34.853573 5.3936228e-106 9.1325442 10.2208898   0
+as.factor(occasion)2 9.9966369 0.30297492 364.82444 32.994932 1.4989212e-111 9.4028060 10.5904677   2
+as.factor(occasion)4 9.7562037 0.33464832 453.18063 29.153601 5.3264510e-106 9.1002930 10.4121144   4
+as.factor(occasion)6 9.9568671 0.38183118 535.05981 26.076622  2.3495459e-97 9.2084780 10.7052562   6
+as.factor(occasion)8 8.4617503 0.42751181 556.91706 19.793021  2.0142301e-66 7.6238272  9.2996735   8
+> png(file = "R Plots/R Recall by Time.png")
+> plot(x = TimMeans$Tim, y = TimMeans$Estimate, type = "l", ylim = c(min(TimMeans$LCI), 
++ max(TimMeans$UCI)), xlab = "Rounded Time in Years", ylab = "Predicted Recall")
+> estimate = 1
+> for (estimate in 1:nrow(TimMeans)) {
++ points(x = TimMeans$Tim[estimate], y = TimMeans$Estimate[estimate])
++ lines(x = c(TimMeans$Tim[estimate], TimMeans$Tim[estimate]), 
++ 
++ y = c(TimMeans$LCI[estimate], TimMeans$UCI[estimate]))
++ }
+> dev.off()
+null device 
+          1 
+
+   
+
+> print("Model 1a Age: Fixed Quadratic, Random Intercept Model")
+[1] "Model 1a Age: Fixed Quadratic, Random Intercept Model"
+> RIAge = lmer(data = Example2, REML = FALSE, formula = recall ~ 
++ 1 + tvage84 + tvage84sq + (1 | PersonID))
+> llikAIC(RIAge)
+$logLik
+'log Lik.' -1425.3132 (df=5)
+
+$AICtab
+       AIC        BIC     logLik   deviance   df.resid 
+ 2860.6264  2882.2393 -1425.3132  2850.6264   552.0000 
+
+> summary(RIAge)
+Linear mixed model fit by maximum likelihood . t-tests use Satterthwaite's method ['lmerModLmerTest']
+Formula: recall ~ 1 + tvage84 + tvage84sq + (1 | PersonID)
+   Data: Example2
+
+     AIC      BIC   logLik deviance df.resid 
+  2860.6   2882.2  -1425.3   2850.6      552 
+
+Scaled residuals: 
+     Min       1Q   Median       3Q      Max 
+-4.16567 -0.53451  0.07257  0.54973  2.91173 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ PersonID (Intercept) 10.4804  3.2373  
+ Residual              5.0716  2.2520  
+Number of obs: 557, groups:  PersonID, 207
+
+Fixed effects:
+               Estimate  Std. Error          df t value Pr(>|t|)
+(Intercept)   9.8196505   0.2634293 230.9528321 37.2762  < 2e-16
+tvage84      -0.1189889   0.0516498 465.3551305 -2.3038  0.02168
+tvage84sq     0.0047917   0.0075791 474.9664062  0.6322  0.52755
+
+Correlation of Fixed Effects:
+          (Intr) tvag84
+tvage84    0.021       
+tvage84sq -0.245 -0.668
+> print("Total R2 for fixed age slopes")
+[1] "Total R2 for fixed age slopes"
+> Example2$PredRIAge = predict(RIAge, re.form = NA)
+> rRIAge = cor.test(Example2$PredRIAge, Example2$recall, method = "pearson")
+> rRIAge$estimate^2
+         cor 
+0.0046803019 
+
+   
+
+> print("Model 1b Time: Fixed Quadratic, Random Intercept Model")
+[1] "Model 1b Time: Fixed Quadratic, Random Intercept Model"
+> RITim = lmer(data = Example2, REML = FALSE, formula = recall ~ 
++ 1 + time + timesq + (1 | PersonID))
+> llikAIC(RITim)
+$logLik
+'log Lik.' -1423.0044 (df=5)
+
+$AICtab
+       AIC        BIC     logLik   deviance   df.resid 
+ 2856.0088  2877.6216 -1423.0044  2846.0088   552.0000 
+
+> summary(RITim)
+Linear mixed model fit by maximum likelihood . t-tests use Satterthwaite's method ['lmerModLmerTest']
+Formula: recall ~ 1 + time + timesq + (1 | PersonID)
+   Data: Example2
+
+     AIC      BIC   logLik deviance df.resid 
+  2856.0   2877.6  -1423.0   2846.0      552 
+
+Scaled residuals: 
+     Min       1Q   Median       3Q      Max 
+-3.96691 -0.52371  0.05145  0.53724  2.80014 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ PersonID (Intercept) 10.622   3.2591  
+ Residual              4.983   2.2323  
+Number of obs: 557, groups:  PersonID, 207
+
+Fixed effects:
+              Estimate Std. Error         df t value  Pr(>|t|)
+(Intercept)   9.660987   0.274986 282.359753 35.1326 < 2.2e-16
+time          0.261331   0.119243 377.995056  2.1916  0.029019
+timesq       -0.046907   0.015826 366.791758 -2.9640  0.003235
+
+Correlation of Fixed Effects:
+       (Intr) time  
+time   -0.353       
+timesq  0.260 -0.937
+> print("Total R2 for fixed time slopes")
+[1] "Total R2 for fixed time slopes"
+> Example2$PredRITim = predict(RITim, re.form = NA)
+> rRITim = cor.test(Example2$PredRITim, Example2$recall, method = "pearson")
+> rRITim$estimate^2
+         cor 
+0.0027296325 
+
+   
+
+> print("Model 2a Age: Fixed Quadratic, Random Intercept Model")
+[1] "Model 2a Age: Fixed Quadratic, Random Intercept Model"
+> print("Controlling for Birth Cohort as Contextual Effects")
+[1] "Controlling for Birth Cohort as Contextual Effects"
+> RICohAge = lmer(data = Example2, REML = FALSE, formula = recall ~ 
++ 1 + tvage84 + tvage84sq + ageT084 + ageT084sq + tvage84:ageT084 + 
++ 
++ (1 | PersonID))
+> llikAIC(RICohAge)
+$logLik
+'log Lik.' -1417.6923 (df=8)
+
+$AICtab
+       AIC        BIC     logLik   deviance   df.resid 
+ 2851.3846  2885.9651 -1417.6923  2835.3846   549.0000 
+
+> summary(RICohAge)
+Linear mixed model fit by maximum likelihood . t-tests use Satterthwaite's method ['lmerModLmerTest']
+Formula: recall ~ 1 + tvage84 + tvage84sq + ageT084 + ageT084sq + tvage84:ageT084 +      (1 | PersonID)
+   Data: Example2
+
+     AIC      BIC   logLik deviance df.resid 
+  2851.4   2886.0  -1417.7   2835.4      549 
+
+Scaled residuals: 
+     Min       1Q   Median       3Q      Max 
+-4.05057 -0.53865  0.05382  0.54624  2.86435 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ PersonID (Intercept) 10.2325  3.1988  
+ Residual              4.9275  2.2198  
+Number of obs: 557, groups:  PersonID, 207
+
+Fixed effects:
+                  Estimate Std. Error         df t value  Pr(>|t|)
+(Intercept)       9.388079   0.341412 263.136000 27.4978 < 2.2e-16
+tvage84           0.287618   0.119256 380.694774  2.4118 0.0163477
+tvage84sq        -0.043547   0.015815 366.603154 -2.7535 0.0061904
+ageT084          -0.575545   0.157213 556.003996 -3.6609 0.0002753
+ageT084sq        -0.075633   0.028853 549.018161 -2.6213 0.0090012
+tvage84:ageT084   0.126026   0.034676 377.633390  3.6344 0.0003172
+
+Correlation of Fixed Effects:
+            (Intr) tvag84 tvg84s ageT084 agT084s
+tvage84     -0.282                              
+tvage84sq    0.190 -0.915                       
+ageT084      0.481 -0.772  0.672                
+ageT084sq   -0.204 -0.574  0.497  0.373         
+tvg84:gT084 -0.225  0.891 -0.860 -0.760  -0.726 
+> print("Total Linear
++ Birth Cohort on Intercept")
+[1] "Total Linear    Birth Cohort on Intercept"
+> contest1D(RICohAge, L = c(0, 1, 0, 1, 0, 0))
+     Estimate Std. Error        df    t value     Pr(>|t|)
+1 -0.28792735 0.10003879 250.76393 -2.8781571 0.0043449637
+> print("Total Quadratic Birth Cohort on Intercept")
+[1] "Total Quadratic Birth Cohort on Intercept"
+> contest1D(RICohAge, L = c(0, 0, 1, 0, 1, 1))
+      Estimate  Std. Error        df    t value   Pr(>|t|)
+1 0.0068458763 0.018496716 235.73005 0.37011307 0.71163056
+> print("Total Linear Birth Cohort on Linear Slope")
+[1] "Total Linear Birth Cohort on Linear Slope"
+> contest1D(RICohAge, L = c(0, 0, 2, 0, 0, 1))
+     Estimate  Std. Error        df   t value    Pr(>|t|)
+1 0.038932654 0.017779819 400.38829 2.1897104 0.029121678
+> print("LRT for birth cohort contextual fixed slopes")
+[1] "LRT for birth cohort contextual fixed slopes"
+> anova(RICohAge, RIAge)
+Data: Example2
+Models:
+RIAge: recall ~ 1 + tvage84 + tvage84sq + (1 | PersonID)
+RICohAge: recall ~ 1 + tvage84 + tvage84sq + ageT084 + ageT084sq + tvage84:ageT084 + (1 | PersonID)
+         npar     AIC     BIC   logLik deviance   Chisq Df Pr(>Chisq)
+RIAge       5 2860.63 2882.24 -1425.31  2850.63                      
+RICohAge    8 2851.39 2885.97 -1417.69  2835.39 15.2418  3  0.0016212
+> print("Total R2 for all fixed slopes and change in total R2 for birth cohort effects")
+[1] "Total R2 for all fixed slopes and change in total R2 for birth cohort effects"
+> Example2$PredRICohAge = predict(RICohAge, re.form = NA)
+> rRICohAge = cor.test(Example2$PredRICohAge, Example2$recall, 
++ method = "pearson")
+> rRICohAge$estimate^2
+        cor 
+0.025145884 
+> rRICohAge$estimate^2 - rRIAge$estimate^2
+        cor 
+0.020465582 
+
+   
+
+> print("Model 2b Time: Fixed Quadratic, Random Intercept Model")
+[1] "Model 2b Time: Fixed Quadratic, Random Intercept Model"
+> print("Controlling for Birth Cohort as Total Effects")
+[1] "Controlling for Birth Cohort as Total Effects"
+> RICohTim = lmer(data = Example2, REML = FALSE, formula = recall ~ 
++ 1 + time + timesq + ageT084 + ageT084sq + time:ageT084 + 
++ 
++ (1 | PersonID))
+> llikAIC(RICohTim)
+$logLik
+'log Lik.' -1417.6923 (df=8)
+
+$AICtab
+       AIC        BIC     logLik   deviance   df.resid 
+ 2851.3846  2885.9651 -1417.6923  2835.3846   549.0000 
+
+> summary(RICohTim)
+Linear mixed model fit by maximum likelihood . t-tests use Satterthwaite's method ['lmerModLmerTest']
+Formula: recall ~ 1 + time + timesq + ageT084 + ageT084sq + time:ageT084 +      (1 | PersonID)
+   Data: Example2
+
+     AIC      BIC   logLik deviance df.resid 
+  2851.4   2886.0  -1417.7   2835.4      549 
+
+Scaled residuals: 
+     Min       1Q   Median       3Q      Max 
+-4.05057 -0.53865  0.05382  0.54624  2.86435 
+
+Random effects:
+ Groups   Name        Variance Std.Dev.
+ PersonID (Intercept) 10.2325  3.1988  
+ Residual              4.9275  2.2198  
+Number of obs: 557, groups:  PersonID, 207
+
+Fixed effects:
+                Estimate  Std. Error          df t value  Pr(>|t|)
+(Intercept)    9.3880788   0.3414122 263.1359999 27.4978 < 2.2e-16
+time           0.2876175   0.1192557 380.6947769  2.4118  0.016348
+timesq        -0.0435466   0.0158152 366.6031559 -2.7535  0.006190
+ageT084       -0.2879274   0.1000388 250.7639296 -2.8782  0.004345
+ageT084sq      0.0068459   0.0184967 235.7300477  0.3701  0.711631
+time:ageT084   0.0389327   0.0177798 400.3882883  2.1897  0.029122
+
+Correlation of Fixed Effects:
+            (Intr) time   timesq ageT084 agT084s
+time        -0.282                              
+timesq       0.190 -0.915                       
+ageT084      0.420 -0.020 -0.035                
+ageT084sq   -0.577 -0.008  0.018 -0.429         
+time:agT084 -0.100  0.110  0.102 -0.319   0.044 
+> print("Contextual Linear
++ Birth Cohort on Intercept")
+[1] "Contextual Linear    Birth Cohort on Intercept"
+> contest1D(RICohTim, L = c(0, -1, 0, 1, 0, 0))
+     Estimate Std. Error      df    t value      Pr(>|t|)
+1 -0.57554488 0.15721289 556.004 -3.6609268 0.00027528003
+> print("Contextual Quadratic Birth Cohort on Intercept")
+[1] "Contextual Quadratic Birth Cohort on Intercept"
+> contest1D(RICohTim, L = c(0, 0, 1, 0, 1, -1))
+      Estimate  Std. Error        df    t value     Pr(>|t|)
+1 -0.075633385 0.028852904 549.01816 -2.6213439 0.0090012011
+> print("Contextual Linear Birth Cohort on Linear Slope")
+[1] "Contextual Linear Birth Cohort on Linear Slope"
+> contest1D(RICohTim, L = c(0, 0, -2, 0, 0, 1))
+    Estimate  Std. Error        df   t value      Pr(>|t|)
+1 0.12602587 0.034675651 377.63339 3.6344197 0.00031718011
+> print("LRT for birth cohort total fixed slopes")
+[1] "LRT for birth cohort total fixed slopes"
+> anova(RICohTim, RITim)
+Data: Example2
+Models:
+RITim: recall ~ 1 + time + timesq + (1 | PersonID)
+RICohTim: recall ~ 1 + time + timesq + ageT084 + ageT084sq + time:ageT084 + (1 | PersonID)
+         npar     AIC     BIC   logLik deviance   Chisq Df Pr(>Chisq)
+RITim       5 2856.01 2877.62 -1423.00  2846.01                      
+RICohTim    8 2851.39 2885.97 -1417.69  2835.39 10.6242  3   0.013942
+> print("Total R2 for all fixed slopes and change in total R2 for age effects")
+[1] "Total R2 for all fixed slopes and change in total R2 for age effects"
+> Example2$PredRICohTim = predict(RICohTim, re.form = NA)
+> rRICohTim = cor.test(Example2$PredRICohTim, Example2$recall, 
++ method = "pearson")
+> rRICohTim$estimate^2
+        cor 
+0.025145884 
+> rRICohTim$estimate^2 - rRITim$estimate^2
+        cor 
+0.022416251 
+
+   
+
+> print("Model 3a Age: Add Random Linear TVage to Model 2a")
+[1] "Model 3a Age: Add Random Linear TVage to Model 2a"
+> RLCohAge = lmer(data = Example2, REML = FALSE, formula = recall ~ 
++ 1 + tvage84 + tvage84sq + ageT084 + ageT084sq + tvage84:ageT084 + 
++ 
++ (1 + tvage84 | PersonID))
+> llikAIC(RLCohAge)
+$logLik
+'log Lik.' -1411.9227 (df=10)
+
+$AICtab
+       AIC        BIC     logLik   deviance   df.resid 
+ 2843.8455  2887.0711 -1411.9227  2823.8455   547.0000 
+
+> summary(RLCohAge)
+Linear mixed model fit by maximum likelihood . t-tests use Satterthwaite's method ['lmerModLmerTest']
+Formula: recall ~ 1 + tvage84 + tvage84sq + ageT084 + ageT084sq + tvage84:ageT084 +      (1 + tvage84 | PersonID)
+   Data: Example2
+
+     AIC      BIC   logLik deviance df.resid 
+  2843.8   2887.1  -1411.9   2823.8      547 
+
+Scaled residuals: 
+      Min        1Q    Median        3Q       Max 
+-2.921458 -0.482278  0.043626  0.513382  2.837311 
+
+Random effects:
+ Groups   Name        Variance  Std.Dev. Corr  
+ PersonID (Intercept) 11.154725 3.33987        
+          tvage84      0.090726 0.30121  -0.340
+ Residual              4.110764 2.02750        
+Number of obs: 557, groups:  PersonID, 207
+
+Fixed effects:
+                  Estimate Std. Error         df t value  Pr(>|t|)
+(Intercept)       9.414130   0.350985 256.483500 26.8220 < 2.2e-16
+tvage84           0.295904   0.113458 353.980589  2.6081 0.0094915
+tvage84sq        -0.045388   0.015083 333.443196 -3.0092 0.0028184
+ageT084          -0.579338   0.154367 522.386360 -3.7530 0.0001943
+ageT084sq        -0.077490   0.030650 162.364800 -2.5282 0.0124203
+tvage84:ageT084   0.125601   0.034497 356.744786  3.6409 0.0003119
+
+Correlation of Fixed Effects:
+            (Intr) tvag84 tvg84s ageT084 agT084s
+tvage84     -0.291                              
+tvage84sq    0.164 -0.874                       
+ageT084      0.449 -0.737  0.617                
+ageT084sq   -0.266 -0.526  0.430  0.346         
+tvg84:gT084 -0.200  0.853 -0.813 -0.752  -0.682 
+> print("LRT for random linear TVage slope")
+[1] "LRT for random linear TVage slope"
+> anova(RLCohAge, RICohAge)
+Data: Example2
+Models:
+RICohAge: recall ~ 1 + tvage84 + tvage84sq + ageT084 + ageT084sq + tvage84:ageT084 + (1 | PersonID)
+RLCohAge: recall ~ 1 + tvage84 + tvage84sq + ageT084 + ageT084sq + tvage84:ageT084 + (1 + tvage84 | PersonID)
+         npar     AIC     BIC   logLik deviance   Chisq Df Pr(>Chisq)
+RICohAge    8 2851.39 2885.97 -1417.69  2835.39                      
+RLCohAge   10 2843.84 2887.07 -1411.92  2823.84 11.5391  2  0.0031211
+
+   
+
+> print("Model 3b Time: Add Random Linear Time to Model 2b")
+[1] "Model 3b Time: Add Random Linear Time to Model 2b"
+> RLCohTim = lmer(data = Example2, REML = FALSE, formula = recall ~ 
++ 1 + time + timesq + ageT084 + ageT084sq + time:ageT084 + 
++ 
++ (1 + time | PersonID))
+> llikAIC(RLCohTim)
+$logLik
+'log Lik.' -1409.2726 (df=10)
+
+$AICtab
+       AIC        BIC     logLik   deviance   df.resid 
+ 2838.5453  2881.7709 -1409.2726  2818.5453   547.0000 
+
+> summary(RLCohTim)
+Linear mixed model fit by maximum likelihood . t-tests use Satterthwaite's method ['lmerModLmerTest']
+Formula: recall ~ 1 + time + timesq + ageT084 + ageT084sq + time:ageT084 +      (1 + time | PersonID)
+   Data: Example2
+
+     AIC      BIC   logLik deviance df.resid 
+  2838.5   2881.8  -1409.3   2818.5      547 
+
+Scaled residuals: 
+     Min       1Q   Median       3Q      Max 
+-2.69033 -0.45877  0.04508  0.50710  2.83803 
+
+Random effects:
+ Groups   Name        Variance Std.Dev. Corr  
+ PersonID (Intercept) 12.4835  3.53320        
+          time         0.1272  0.35665  -0.473
+ Residual              3.9405  1.98508        
+Number of obs: 557, groups:  PersonID, 207
+
+Fixed effects:
+                Estimate  Std. Error          df t value  Pr(>|t|)
+(Intercept)    9.3402104   0.3515637 230.2831758 26.5676 < 2.2e-16
+time           0.3132277   0.1123665 366.1427566  2.7876  0.005588
+timesq        -0.0455538   0.0149692 340.1904601 -3.0432  0.002523
+ageT084       -0.2972341   0.1050941 205.1743603 -2.8283  0.005144
+ageT084sq      0.0091296   0.0183207 229.8606122  0.4983  0.618735
+time:ageT084   0.0442743   0.0207981 126.2247447  2.1288  0.035217
+
+Correlation of Fixed Effects:
+            (Intr) time   timesq ageT084 agT084s
+time        -0.324                              
+timesq       0.156 -0.864                       
+ageT084      0.414 -0.051 -0.033                
+ageT084sq   -0.562  0.003  0.019 -0.425         
+time:agT084 -0.144  0.152  0.094 -0.431   0.080 
+> print("LRT for random linear time slope")
+[1] "LRT for random linear time slope"
+> anova(RLCohTim, RICohTim)
+Data: Example2
+Models:
+RICohTim: recall ~ 1 + time + timesq + ageT084 + ageT084sq + time:ageT084 + (1 | PersonID)
+RLCohTim: recall ~ 1 + time + timesq + ageT084 + ageT084sq + time:ageT084 + (1 + time | PersonID)
+         npar     AIC     BIC   logLik deviance   Chisq Df Pr(>Chisq)
+RICohTim    8 2851.39 2885.97 -1417.69  2835.39                      
+RLCohTim   10 2838.55 2881.77 -1409.27  2818.55 16.8393  2 0.00022049
+
+   
+
+> print("Model 4a Age: Add Random Linear AgeCoh to Model 3a -- won't run")
+[1] "Model 4a Age: Add Random Linear AgeCoh to Model 3a -- won't run"
+
+   
+
+> print("Model 4b Time: Add Random Linear Time to Model 3b -- won't run")
+[1] "Model 4b Time: Add Random Linear Time to Model 3b -- won't run"
+
+   
+

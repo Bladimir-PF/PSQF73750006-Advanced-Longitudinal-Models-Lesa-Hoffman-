@@ -1,0 +1,1008 @@
+------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Dropbox\23_PSQF7375_AdvLong\PSQF7375_AdvLong_Example2\AdvLong_Example2_STATA_Output.log
+  log type:  text
+ opened on:  24 Jan 2023, 08:54:31
+
+. 
+. display "Descriptive Statistics"
+Descriptive Statistics
+
+. summarize aget0 tvage time recall
+
+    Variable |        Obs        Mean    Std. Dev.       Min        Max
+-------------+---------------------------------------------------------
+       aget0 |        557    82.97113    2.688563   79.41918   97.77808
+       tvage |        557    85.64534     3.55728   79.41918   99.89863
+        time |        557    2.674216    2.603101          0   8.502732
+      recall |        557     10.1939    3.826512          0         16
+
+. pwcorr aget0 tvage time recall, sig
+
+             |    aget0    tvage     time   recall
+-------------+------------------------------------
+       aget0 |   1.0000 
+             |
+             |
+       tvage |   0.6852   1.0000 
+             |   0.0000
+             |
+        time |  -0.0965   0.6589   1.0000 
+             |   0.0228   0.0000
+             |
+      recall |  -0.1230  -0.0630   0.0409   1.0000 
+             |   0.0037   0.1375   0.3352
+             |
+
+. 
+. display "Empty Means, Random Intercept Model for Age"
+Empty Means, Random Intercept Model for Age
+
+. mixed tvage , || personid: , mle nolog 
+
+Mixed-effects ML regression                     Number of obs     =        557
+Group variable: personid                        Number of groups  =        207
+
+                                                Obs per group:
+                                                              min =          1
+                                                              avg =        2.7
+                                                              max =          5
+
+                                                Wald chi2(0)      =          .
+Log likelihood = -1460.2133                     Prob > chi2       =          .
+
+------------------------------------------------------------------------------
+       tvage |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       _cons |   85.40236   .2040709   418.49   0.000     85.00239    85.80233
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+personid: Identity           |
+                  var(_cons) |   5.091145   .8861275      3.619608    7.160929
+-----------------------------+------------------------------------------------
+               var(Residual) |    7.77283   .5869496      6.703513    9.012721
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 72.93         Prob >= chibar2 = 0.0000
+
+. estat icc  // Intraclass correlation
+
+Intraclass correlation
+
+------------------------------------------------------------------------------
+                       Level |        ICC   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+                    personid |   .3957676   .0500664      .3029102    .4968037
+------------------------------------------------------------------------------
+
+.           
+. display "Empty Means, Random Intercept Model for Time"
+Empty Means, Random Intercept Model for Time
+
+. mixed time , || personid: , mle nolog
+
+Mixed-effects ML regression                     Number of obs     =        557
+Group variable: personid                        Number of groups  =        207
+
+                                                Obs per group:
+                                                              min =          1
+                                                              avg =        2.7
+                                                              max =          5
+
+                                                Wald chi2(0)      =          .
+Log likelihood = -1322.7321                     Prob > chi2       =          .
+
+------------------------------------------------------------------------------
+        time |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       _cons |   2.674216   .1101979    24.27   0.000     2.458232      2.8902
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+personid: Identity           |
+                  var(_cons) |   3.74e-20   1.03e-19      1.70e-22    8.23e-18
+-----------------------------+------------------------------------------------
+               var(Residual) |   6.763969   .4053182      6.014436    7.606909
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 0.00          Prob >= chibar2 = 1.0000
+
+. estat icc  // Intraclass correlation
+
+Intraclass correlation
+
+------------------------------------------------------------------------------
+                       Level |        ICC   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+                    personid |   5.53e-21          0      5.53e-21    5.53e-21
+------------------------------------------------------------------------------
+
+. 
+. display "Model 0: Empty Means, Random Intercept Model for Recall Outcome"
+Model 0: Empty Means, Random Intercept Model for Recall Outcome
+
+. mixed recall , || personid: , mle nolog
+
+Mixed-effects ML regression                     Number of obs     =        557
+Group variable: personid                        Number of groups  =        207
+
+                                                Obs per group:
+                                                              min =          1
+                                                              avg =        2.7
+                                                              max =          5
+
+                                                Wald chi2(0)      =          .
+Log likelihood = -1428.6775                     Prob > chi2       =          .
+
+------------------------------------------------------------------------------
+      recall |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+       _cons |   9.734908   .2505783    38.85   0.000     9.243784    10.22603
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+personid: Identity           |
+                  var(_cons) |   10.45792   1.309559      8.181943    13.36701
+-----------------------------+------------------------------------------------
+               var(Residual) |   5.164586   .3930054      4.448999     5.99527
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 217.28        Prob >= chibar2 = 0.0000
+
+. display "-2LL = " e(ll)*-2  // Print -2LL for model  
+-2LL = 2857.355
+
+. estat icc  // Intraclass correlation
+
+Intraclass correlation
+
+------------------------------------------------------------------------------
+                       Level |        ICC   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+                    personid |   .6694138   .0347124       .598231    .7336009
+------------------------------------------------------------------------------
+
+.           
+. display "Saturated Means by Rounded Age, Random Intercept Model"
+Saturated Means by Rounded Age, Random Intercept Model
+
+. mixed recall i.roundage, || personid: , mle nolog
+
+Mixed-effects ML regression                     Number of obs     =        557
+Group variable: personid                        Number of groups  =        207
+
+                                                Obs per group:
+                                                              min =          1
+                                                              avg =        2.7
+                                                              max =          5
+
+                                                Wald chi2(16)     =      28.09
+Log likelihood =  -1415.083                     Prob > chi2       =     0.0309
+
+------------------------------------------------------------------------------
+      recall |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    roundage |
+         80  |  -3.040891   1.808104    -1.68   0.093    -6.584709     .502927
+         81  |  -3.746704   1.789519    -2.09   0.036    -7.254097   -.2393119
+         82  |  -3.357461   1.749538    -1.92   0.055    -6.786494    .0715706
+         83  |  -3.609251   1.785102    -2.02   0.043    -7.107986   -.1105156
+         84  |  -3.641355   1.739709    -2.09   0.036    -7.051123   -.2315878
+         85  |  -3.881963   1.786291    -2.17   0.030     -7.38303   -.3808968
+         86  |  -3.511053   1.743324    -2.01   0.044    -6.927906   -.0942007
+         87  |  -3.618165     1.7844    -2.03   0.043    -7.115525   -.1208057
+         88  |   -3.91318    1.75241    -2.23   0.026     -7.34784   -.4785203
+         89  |  -4.522045    1.79076    -2.53   0.012    -8.031869   -1.012221
+         90  |  -3.863591    1.80446    -2.14   0.032    -7.400267   -.3269145
+         91  |  -5.799055   1.842761    -3.15   0.002      -9.4108   -2.187309
+         92  |  -3.972397   1.848589    -2.15   0.032    -7.595565    -.349228
+         93  |  -5.703432   1.996853    -2.86   0.004    -9.617192   -1.789673
+         94  |  -2.996408   2.059523    -1.45   0.146    -7.032998    1.040182
+         95  |  -2.751423    2.12049    -1.30   0.194    -6.907507    1.404661
+             |
+       _cons |   13.49127   1.743314     7.74   0.000     10.07444    16.90811
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+personid: Identity           |
+                  var(_cons) |   10.47406   1.297342      8.216429    13.35202
+-----------------------------+------------------------------------------------
+               var(Residual) |   4.813043   .3668586      4.145145    5.588559
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 228.54        Prob >= chibar2 = 0.0000
+
+. margins  i.roundage  // get saturated means per age and plot them
+
+Adjusted predictions                            Number of obs     =        557
+
+Expression   : Linear prediction, fixed portion, predict()
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |     Margin   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    roundage |
+         79  |   13.49127   1.743314     7.74   0.000     10.07444    16.90811
+         80  |   10.45038   .6118924    17.08   0.000     9.251096    11.64967
+         81  |    9.74457   .4497905    21.66   0.000     8.862997    10.62614
+         82  |   10.13381   .4841158    20.93   0.000     9.184963    11.08266
+         83  |   9.882024   .4283558    23.07   0.000     9.042462    10.72159
+         84  |   9.849919   .4242857    23.22   0.000     9.018334     10.6815
+         85  |   9.609311   .4344014    22.12   0.000       8.7579    10.46072
+         86  |   9.980221   .4556477    21.90   0.000     9.087168    10.87327
+         87  |   9.873109   .4343894    22.73   0.000     9.021721     10.7245
+         88  |   9.578094   .4983522    19.22   0.000     8.601341    10.55485
+         89  |   8.969229   .4584126    19.57   0.000     8.070757    9.867701
+         90  |   9.627684   .5907544    16.30   0.000     8.469826    10.78554
+         91  |    7.69222   .6317473    12.18   0.000     6.454018    8.930422
+         92  |   9.518877   .7213114    13.20   0.000     8.105133    10.93262
+         93  |   7.787842   .9904464     7.86   0.000     5.846603    9.729081
+         94  |   10.49487   1.159317     9.05   0.000     8.222647    12.76709
+         95  |   10.73985   1.219186     8.81   0.000     8.350291    13.12941
+------------------------------------------------------------------------------
+
+. marginsplot, xdimension(roundage) name(by_age, replace) 
+
+  Variables that uniquely identify margins: roundage
+
+. graph export "$filesave\STATA plots\STATA Recall by Age.png", replace
+(file C:\Dropbox\23_PSQF7375_AdvLong\PSQF7375_AdvLong_Example2\STATA plots\STATA Recall by Age.png written in PNG format)
+
+. 
+. display "Saturated Means by Rounded Time, Random Intercept Model"
+Saturated Means by Rounded Time, Random Intercept Model
+
+. mixed recall i.occasion, || personid: , mle nolog
+
+Mixed-effects ML regression                     Number of obs     =        557
+Group variable: personid                        Number of groups  =        207
+
+                                                Obs per group:
+                                                              min =          1
+                                                              avg =        2.7
+                                                              max =          5
+
+                                                Wald chi2(4)      =      16.36
+Log likelihood = -1420.7044                     Prob > chi2       =     0.0026
+
+------------------------------------------------------------------------------
+      recall |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    occasion |
+          2  |   .3199198   .2590023     1.24   0.217    -.1877153    .8275549
+          4  |   .0794866   .2934922     0.27   0.787    -.4957475    .6547208
+          6  |   .2801501   .3456074     0.81   0.418     -.397228    .9575282
+          8  |  -1.214967   .3952252    -3.07   0.002    -1.989594   -.4403395
+             |
+       _cons |   9.676717   .2776392    34.85   0.000     9.132554    10.22088
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+personid: Identity           |
+                  var(_cons) |   10.64352   1.320273      8.346378    13.57289
+-----------------------------+------------------------------------------------
+               var(Residual) |   4.920005   .3750727       4.23716    5.712895
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 225.30        Prob >= chibar2 = 0.0000
+
+. margins  i.occasion  // get saturated means per occasion and plot them
+
+Adjusted predictions                            Number of obs     =        557
+
+Expression   : Linear prediction, fixed portion, predict()
+
+------------------------------------------------------------------------------
+             |            Delta-method
+             |     Margin   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+    occasion |
+          0  |   9.676717   .2776392    34.85   0.000     9.132554    10.22088
+          2  |   9.996637   .3029749    32.99   0.000     9.402817    10.59046
+          4  |   9.756204   .3346483    29.15   0.000     9.100305     10.4121
+          6  |   9.956867   .3818312    26.08   0.000     9.208492    10.70524
+          8  |    8.46175   .4275118    19.79   0.000     7.623843    9.299658
+------------------------------------------------------------------------------
+
+. marginsplot, xdimension(occasion) name(by_time, replace) 
+
+  Variables that uniquely identify margins: occasion
+
+. graph export "$filesave\STATA plots\STATA Recall by Time.png", replace
+(file C:\Dropbox\23_PSQF7375_AdvLong\PSQF7375_AdvLong_Example2\STATA plots\STATA Recall by Time.png written in PNG format)
+
+. 
+.           
+. ********************************************************************************
+. ******         BEGIN AGE-AS-TIME AND TIME-AS-TIME MODELS                 *******
+. ********************************************************************************
+. 
+. display "Model 1a Age: Fixed Quadratic, Random Intercept Model"
+Model 1a Age: Fixed Quadratic, Random Intercept Model
+
+. mixed recall c.tvage84 c.tvage84sq, || personid: , mle nolog 
+
+Mixed-effects ML regression                     Number of obs     =        557
+Group variable: personid                        Number of groups  =        207
+
+                                                Obs per group:
+                                                              min =          1
+                                                              avg =        2.7
+                                                              max =          5
+
+                                                Wald chi2(2)      =       6.79
+Log likelihood = -1425.3132                     Prob > chi2       =     0.0336
+
+------------------------------------------------------------------------------
+      recall |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+     tvage84 |  -.1189889   .0516498    -2.30   0.021    -.2202208   -.0177571
+   tvage84sq |   .0047917   .0075791     0.63   0.527     -.010063    .0196464
+       _cons |    9.81965   .2634294    37.28   0.000     9.303338    10.33596
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+personid: Identity           |
+                  var(_cons) |   10.48043   1.307503      8.207034    13.38358
+-----------------------------+------------------------------------------------
+               var(Residual) |    5.07161   .3860011      4.368786      5.8875
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 221.24        Prob >= chibar2 = 0.0000
+
+. display "-2LL = " e(ll)*-2  // Print -2LL for model  
+-2LL = 2850.6264
+
+. estat ic, n(207)            // Information criteria at N=# persons
+
+Akaike's information criterion and Bayesian information criterion
+
+-----------------------------------------------------------------------------
+       Model |        Obs  ll(null)  ll(model)      df         AIC        BIC
+-------------+---------------------------------------------------------------
+           . |        207         .  -1425.313       5    2860.626    2877.29
+-----------------------------------------------------------------------------
+               Note: N=207 used in calculating BIC.
+
+. estimates store FitRIAge    // Save for LRT
+
+. predict PredAge, xb         // Save fixed-pred outcomes for total-R2
+
+. corr recall PredAge         // Get total r to make R2
+(obs=557)
+
+             |   recall  PredAge
+-------------+------------------
+      recall |   1.0000
+     PredAge |   0.0684   1.0000
+
+
+.      display r(rho)^2       // Print total R2 relative to empty model
+.00468031
+
+. 
+. 
+. display "Model 1b Time: Fixed Quadratic, Random Intercept Model"
+Model 1b Time: Fixed Quadratic, Random Intercept Model
+
+. mixed recall c.time c.timesq, || personid: , mle nolog 
+
+Mixed-effects ML regression                     Number of obs     =        557
+Group variable: personid                        Number of groups  =        207
+
+                                                Obs per group:
+                                                              min =          1
+                                                              avg =        2.7
+                                                              max =          5
+
+                                                Wald chi2(2)      =      11.57
+Log likelihood = -1423.0044                     Prob > chi2       =     0.0031
+
+------------------------------------------------------------------------------
+      recall |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+        time |   .2613309   .1192431     2.19   0.028     .0276188     .495043
+      timesq |  -.0469071   .0158256    -2.96   0.003    -.0779248   -.0158895
+       _cons |   9.660987   .2749864    35.13   0.000     9.122023    10.19995
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+personid: Identity           |
+                  var(_cons) |   10.62162   1.320374      8.324879    13.55201
+-----------------------------+------------------------------------------------
+               var(Residual) |   4.983023   .3797372      4.291667    5.785751
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 223.63        Prob >= chibar2 = 0.0000
+
+. display "-2LL = " e(ll)*-2  // Print -2LL for model  
+-2LL = 2846.0088
+
+. estat ic, n(207)            // Information criteria at N=# persons
+
+Akaike's information criterion and Bayesian information criterion
+
+-----------------------------------------------------------------------------
+       Model |        Obs  ll(null)  ll(model)      df         AIC        BIC
+-------------+---------------------------------------------------------------
+           . |        207         .  -1423.004       5    2856.009   2872.672
+-----------------------------------------------------------------------------
+               Note: N=207 used in calculating BIC.
+
+. estimates store FitRITim    // Save for LRT
+
+. predict PredTim, xb         // Save fixed-pred outcomes for total-R2
+
+. corr recall PredTim         // Get total r to make R2
+(obs=557)
+
+             |   recall  PredTim
+-------------+------------------
+      recall |   1.0000
+     PredTim |   0.0522   1.0000
+
+
+.      display r(rho)^2       // Print total R2 relative to empty model
+.00272962
+
+.      
+. 
+. display "Model 2a Age: Fixed Quadratic, Random Intercept Model"
+Model 2a Age: Fixed Quadratic, Random Intercept Model
+
+. display "Controlling for Birth Cohort as Contextual Effects"
+Controlling for Birth Cohort as Contextual Effects
+
+. mixed recall c.tvage84 c.tvage84sq c.aget084 c.aget084sq c.tvage84#c.aget084, ///
+>              || personid: , mle nolog 
+
+Mixed-effects ML regression                     Number of obs     =        557
+Group variable: personid                        Number of groups  =        207
+
+                                                Obs per group:
+                                                              min =          1
+                                                              avg =        2.7
+                                                              max =          5
+
+                                                Wald chi2(5)      =      22.44
+Log likelihood = -1417.6923                     Prob > chi2       =     0.0004
+
+-------------------------------------------------------------------------------------
+             recall |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+--------------------+----------------------------------------------------------------
+            tvage84 |   .2876175   .1192557     2.41   0.016     .0538806    .5213544
+          tvage84sq |  -.0435466   .0158152    -2.75   0.006    -.0745439   -.0125494
+            aget084 |  -.5755448   .1572129    -3.66   0.000    -.8836764   -.2674132
+          aget084sq |  -.0756334   .0288529    -2.62   0.009     -.132184   -.0190827
+                    |
+c.tvage84#c.aget084 |   .1260259   .0346756     3.63   0.000     .0580628    .1939889
+                    |
+              _cons |   9.388079   .3414123    27.50   0.000     8.718923    10.05723
+-------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+personid: Identity           |
+                  var(_cons) |   10.23247   1.277209      8.011872    13.06853
+-----------------------------+------------------------------------------------
+               var(Residual) |   4.927475   .3753052      4.244162    5.720802
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 221.43        Prob >= chibar2 = 0.0000
+
+. display "-2LL = " e(ll)*-2  // Print -2LL for model  
+-2LL = 2835.3846
+
+. estat ic, n(207)   // Information criteria at N=# persons
+
+Akaike's information criterion and Bayesian information criterion
+
+-----------------------------------------------------------------------------
+       Model |        Obs  ll(null)  ll(model)      df         AIC        BIC
+-------------+---------------------------------------------------------------
+           . |        207         .  -1417.692       8    2851.385   2878.046
+-----------------------------------------------------------------------------
+               Note: N=207 used in calculating BIC.
+
+. // Total Linear Birth Cohort on Intercept
+.    lincom c.aget084*1 + c.tvage84*1
+
+ ( 1)  [recall]tvage84 + [recall]aget084 = 0
+
+------------------------------------------------------------------------------
+      recall |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |  -.2879273   .1000388    -2.88   0.004    -.4839998   -.0918549
+------------------------------------------------------------------------------
+
+. // Total Quadratic Birth Cohort on Intercept
+.    lincom c.aget084sq*1 + c.tvage84#c.aget084*1 + c.tvage84sq*1
+
+ ( 1)  [recall]tvage84sq + [recall]aget084sq + [recall]c.tvage84#c.aget084 = 0
+
+------------------------------------------------------------------------------
+      recall |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   .0068459   .0184967     0.37   0.711     -.029407    .0430988
+------------------------------------------------------------------------------
+
+. // Total Linear Birth Cohort on Linear Slope
+.    lincom c.tvage84#c.aget084*1 + c.tvage84sq*2
+
+ ( 1)  2*[recall]tvage84sq + [recall]c.tvage84#c.aget084 = 0
+
+------------------------------------------------------------------------------
+      recall |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   .0389327   .0177798     2.19   0.029     .0040848    .0737805
+------------------------------------------------------------------------------
+
+. estimates store FitRICohAge     // Save for LRT
+
+. lrtest FitRICohAge FitRIAge     // LRT for birth cohort contextual fixed slopes
+
+Likelihood-ratio test                                 LR chi2(3)  =     15.24
+(Assumption: FitRIAge nested in FitRICohAge)          Prob > chi2 =    0.0016
+
+. predict PredCohAge, xb          // Save fixed-pred outcomes for total-R2
+
+. corr recall PredCohAge          // Get total r to make R2
+(obs=557)
+
+             |   recall PredCo~e
+-------------+------------------
+      recall |   1.0000
+  PredCohAge |   0.1586   1.0000
+
+
+.      display r(rho)^2           // Print total R2 relative to empty model
+.02514588
+
+.           
+. 
+. display "Model 2b Time: Fixed Quadratic, Random Intercept Model"
+Model 2b Time: Fixed Quadratic, Random Intercept Model
+
+. display "Controlling for Birth Cohort as Total Effects"
+Controlling for Birth Cohort as Total Effects
+
+. mixed recall time c.timesq c.aget084 c.aget084sq c.time#c.aget084, ///
+>              || personid: , mle nolog
+
+Mixed-effects ML regression                     Number of obs     =        557
+Group variable: personid                        Number of groups  =        207
+
+                                                Obs per group:
+                                                              min =          1
+                                                              avg =        2.7
+                                                              max =          5
+
+                                                Wald chi2(5)      =      22.44
+Log likelihood = -1417.6923                     Prob > chi2       =     0.0004
+
+----------------------------------------------------------------------------------
+          recall |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-----------------+----------------------------------------------------------------
+            time |   .2876175   .1192557     2.41   0.016     .0538806    .5213544
+          timesq |  -.0435466   .0158152    -2.75   0.006    -.0745439   -.0125494
+         aget084 |  -.2879273   .1000388    -2.88   0.004    -.4839998   -.0918549
+       aget084sq |   .0068459   .0184967     0.37   0.711     -.029407    .0430988
+                 |
+c.time#c.aget084 |   .0389327   .0177798     2.19   0.029     .0040849    .0737805
+                 |
+           _cons |   9.388079   .3414123    27.50   0.000     8.718923    10.05723
+----------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+personid: Identity           |
+                  var(_cons) |   10.23247   1.277209      8.011872    13.06853
+-----------------------------+------------------------------------------------
+               var(Residual) |   4.927475   .3753052      4.244162    5.720802
+------------------------------------------------------------------------------
+LR test vs. linear model: chibar2(01) = 221.43        Prob >= chibar2 = 0.0000
+
+. display "-2LL = " e(ll)*-2  // Print -2LL for model  
+-2LL = 2835.3846
+
+. estat ic, n(207)            // Information criteria at N=# persons
+
+Akaike's information criterion and Bayesian information criterion
+
+-----------------------------------------------------------------------------
+       Model |        Obs  ll(null)  ll(model)      df         AIC        BIC
+-------------+---------------------------------------------------------------
+           . |        207         .  -1417.692       8    2851.385   2878.046
+-----------------------------------------------------------------------------
+               Note: N=207 used in calculating BIC.
+
+. // Contextual Linear Birth Cohort on Intercept
+.    lincom c.aget084*1 + time*-1
+
+ ( 1)  - [recall]time + [recall]aget084 = 0
+
+------------------------------------------------------------------------------
+      recall |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |  -.5755449   .1572129    -3.66   0.000    -.8836765   -.2674133
+------------------------------------------------------------------------------
+
+. // Contextual Quadratic Birth Cohort on Intercept
+.    lincom c.aget084sq*1 + c.time#c.aget084*-1 + c.timesq*1
+
+ ( 1)  [recall]timesq + [recall]aget084sq - [recall]c.time#c.aget084 = 0
+
+------------------------------------------------------------------------------
+      recall |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |  -.0756334   .0288529    -2.62   0.009     -.132184   -.0190827
+------------------------------------------------------------------------------
+
+. // Contextual Linear Birth Cohort on Linear Slope
+.    lincom c.time#c.aget084*1 + c.timesq*-2
+
+ ( 1)  - 2*[recall]timesq + [recall]c.time#c.aget084 = 0
+
+------------------------------------------------------------------------------
+      recall |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+-------------+----------------------------------------------------------------
+         (1) |   .1260259   .0346756     3.63   0.000     .0580628    .1939889
+------------------------------------------------------------------------------
+
+. estimates store FitRICohTim     // Save for LRT
+
+. lrtest FitRICohTim FitRITim     // LRT for birth cohort total fixed slopes
+
+Likelihood-ratio test                                 LR chi2(3)  =     10.62
+(Assumption: FitRITim nested in FitRICohTim)          Prob > chi2 =    0.0139
+
+. predict PredCohTim, xb          // Save fixed-pred outcomes for total R2
+
+. corr recall PredCohTim          // Get total r to make R2
+(obs=557)
+
+             |   recall PredCo~m
+-------------+------------------
+      recall |   1.0000
+  PredCohTim |   0.1586   1.0000
+
+
+.      display r(rho)^2           // Print total R2 relative to empty model
+.02514589
+
+.           
+. 
+. display "Model 3a Age: Add Random Linear TVage to Model 2a"
+Model 3a Age: Add Random Linear TVage to Model 2a
+
+. mixed recall c.tvage84 c.tvage84sq c.aget084 c.aget084sq c.tvage84#c.aget084, ///
+>              || personid: tvage84, mle nolog covariance(unstructured)
+
+Mixed-effects ML regression                     Number of obs     =        557
+Group variable: personid                        Number of groups  =        207
+
+                                                Obs per group:
+                                                              min =          1
+                                                              avg =        2.7
+                                                              max =          5
+
+                                                Wald chi2(5)      =      20.17
+Log likelihood = -1411.9227                     Prob > chi2       =     0.0012
+
+-------------------------------------------------------------------------------------
+             recall |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+--------------------+----------------------------------------------------------------
+            tvage84 |    .295902   .1134579     2.61   0.009     .0735286    .5182754
+          tvage84sq |  -.0453879   .0150827    -3.01   0.003    -.0749495   -.0158263
+            aget084 |  -.5793354   .1543666    -3.75   0.000    -.8818883   -.2767825
+          aget084sq |  -.0774895   .0306508    -2.53   0.011    -.1375639   -.0174151
+                    |
+c.tvage84#c.aget084 |    .125601   .0344975     3.64   0.000     .0579872    .1932148
+                    |
+              _cons |   9.414132   .3509857    26.82   0.000     8.726213    10.10205
+-------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+personid: Unstructured       |
+                var(tvage84) |   .0907217   .0343522      .0431916    .1905562
+                  var(_cons) |   11.15461   1.448107       8.64869    14.38661
+          cov(tvage84,_cons) |  -.3424301   .1769739     -.6892926    .0044325
+-----------------------------+------------------------------------------------
+               var(Residual) |   4.110768   .3745462      3.438485    4.914495
+------------------------------------------------------------------------------
+LR test vs. linear model: chi2(3) = 232.97                Prob > chi2 = 0.0000
+
+Note: LR test is conservative and provided only for reference.
+
+. estat recovariance, relevel(personid) correlation  // GCORR matrix
+
+Random-effects correlation matrix for level personid
+
+             |   tvage84      _cons 
+-------------+----------------------
+     tvage84 |         1            
+       _cons | -.3403996          1 
+
+. display "-2LL = " e(ll)*-2      // Print -2LL for model  
+-2LL = 2823.8455
+
+. estat ic, n(207)                // Information criteria at N=# persons
+
+Akaike's information criterion and Bayesian information criterion
+
+-----------------------------------------------------------------------------
+       Model |        Obs  ll(null)  ll(model)      df         AIC        BIC
+-------------+---------------------------------------------------------------
+           . |        207         .  -1411.923      10    2843.845   2877.173
+-----------------------------------------------------------------------------
+               Note: N=207 used in calculating BIC.
+
+. estimates store FitRLCohAge     // Save for LRT
+
+. lrtest FitRLCohAge FitRICohAge  // LRT for random linear TVage slope       
+
+Likelihood-ratio test                                 LR chi2(2)  =     11.54
+(Assumption: FitRICohAge nested in FitRLCohAge)       Prob > chi2 =    0.0031
+
+Note: The reported degrees of freedom assumes the null hypothesis is not on the boundary of the parameter space.  If this is not true, then the
+      reported test is conservative.
+
+. 
+. 
+. display "Model 3b Time: Add Random Linear Time to Model 2b"
+Model 3b Time: Add Random Linear Time to Model 2b
+
+. mixed recall c.time c.timesq c.aget084 c.aget084sq c.tvage84#c.aget084, ///
+>              || personid: time, mle nolog covariance(unstructured)
+
+Mixed-effects ML regression                     Number of obs     =        557
+Group variable: personid                        Number of groups  =        207
+
+                                                Obs per group:
+                                                              min =          1
+                                                              avg =        2.7
+                                                              max =          5
+
+                                                Wald chi2(5)      =      20.50
+Log likelihood = -1409.2726                     Prob > chi2       =     0.0010
+
+-------------------------------------------------------------------------------------
+             recall |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+--------------------+----------------------------------------------------------------
+               time |   .3132279    .112366     2.79   0.005     .0929946    .5334613
+             timesq |  -.0455539   .0149692    -3.04   0.002     -.074893   -.0162149
+            aget084 |  -.2972343   .1050947    -2.83   0.005    -.5032161   -.0912524
+          aget084sq |  -.0351449   .0265881    -1.32   0.186    -.0872566    .0169669
+                    |
+c.tvage84#c.aget084 |   .0442745   .0207982     2.13   0.033     .0035107    .0850382
+                    |
+              _cons |   9.340209   .3515655    26.57   0.000     8.651153    10.02926
+-------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+personid: Unstructured       |
+                   var(time) |   .1272023   .0432081       .065367    .2475319
+                  var(_cons) |   12.48375    1.59591      9.716918    16.03843
+             cov(time,_cons) |  -.5963404    .225568     -1.038446   -.1542353
+-----------------------------+------------------------------------------------
+               var(Residual) |   3.940495   .3596468       3.29505    4.712371
+------------------------------------------------------------------------------
+LR test vs. linear model: chi2(3) = 238.27                Prob > chi2 = 0.0000
+
+Note: LR test is conservative and provided only for reference.
+
+. estat recovariance, relevel(personid) correlation  // GCORR matrix
+
+Random-effects correlation matrix for level personid
+
+             |      time      _cons 
+-------------+----------------------
+        time |         1            
+       _cons | -.4732321          1 
+
+. display "-2LL = " e(ll)*-2      // Print -2LL for model  
+-2LL = 2818.5453
+
+. estat ic, n(207)                // Information criteria at N=# persons
+
+Akaike's information criterion and Bayesian information criterion
+
+-----------------------------------------------------------------------------
+       Model |        Obs  ll(null)  ll(model)      df         AIC        BIC
+-------------+---------------------------------------------------------------
+           . |        207         .  -1409.273      10    2838.545   2871.872
+-----------------------------------------------------------------------------
+               Note: N=207 used in calculating BIC.
+
+. estimates store FitRLCohTim     // Save for LRT
+
+. lrtest FitRLCohTim FitRICohTim  // LRT for random linear time slope
+
+Likelihood-ratio test                                 LR chi2(2)  =     16.84
+(Assumption: FitRICohTim nested in FitRLCohTim)       Prob > chi2 =    0.0002
+
+Note: The reported degrees of freedom assumes the null hypothesis is not on the boundary of the parameter space.  If this is not true, then the
+      reported test is conservative.
+
+.               
+. 
+. display "Model 4a Age: Add Random Linear AgeCoh to Model 3a -- extra iterations"
+Model 4a Age: Add Random Linear AgeCoh to Model 3a -- extra iterations
+
+. mixed recall c.tvage84 c.tvage84sq c.aget084 c.aget084sq c.tvage84#c.aget084, ///
+>              || personid: tvage84 aget084, mle nolog emiterate(100) covariance(unstructured)
+
+Mixed-effects ML regression                     Number of obs     =        557
+Group variable: personid                        Number of groups  =        207
+
+                                                Obs per group:
+                                                              min =          1
+                                                              avg =        2.7
+                                                              max =          5
+
+                                                Wald chi2(5)      =      20.47
+Log likelihood =  -1409.253                     Prob > chi2       =     0.0010
+
+-------------------------------------------------------------------------------------
+             recall |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+--------------------+----------------------------------------------------------------
+            tvage84 |   .3135771   .1123666     2.79   0.005     .0933427    .5338115
+          tvage84sq |  -.0455586   .0149703    -3.04   0.002    -.0748999   -.0162172
+            aget084 |  -.6110121   .1582063    -3.86   0.000    -.9210908   -.3009334
+          aget084sq |  -.0807496   .0299605    -2.70   0.007     -.139471   -.0220282
+                    |
+c.tvage84#c.aget084 |   .1358292   .0348349     3.90   0.000     .0675541    .2041042
+                    |
+              _cons |   9.336705   .3540701    26.37   0.000      8.64274    10.03067
+-------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+personid: Unstructured       |
+                var(tvage84) |   .1269809          .             .           .
+                var(aget084) |    .144648          .             .           .
+                  var(_cons) |   12.53306          .             .           .
+        cov(tvage84,aget084) |  -.1355204          .             .           .
+          cov(tvage84,_cons) |  -.6000273          .             .           .
+          cov(aget084,_cons) |   .6519523          .             .           .
+-----------------------------+------------------------------------------------
+               var(Residual) |   3.941131          .             .           .
+------------------------------------------------------------------------------
+LR test vs. linear model: chi2(6) = 238.31                Prob > chi2 = 0.0000
+
+Note: LR test is conservative and provided only for reference.
+
+. estat recovariance, relevel(personid) correlation  // GCORR matrix
+
+Random-effects correlation matrix for level personid
+
+             |   tvage84    aget084      _cons 
+-------------+---------------------------------
+     tvage84 |         1                       
+     aget084 | -.9999523          1            
+       _cons | -.4756344   .4842071          1 
+
+. display "-2LL = " e(ll)*-2         // Print -2LL for model  
+-2LL = 2818.506
+
+. estat ic, n(207)                   // Information criteria at N=# persons
+
+Akaike's information criterion and Bayesian information criterion
+
+-----------------------------------------------------------------------------
+       Model |        Obs  ll(null)  ll(model)      df         AIC        BIC
+-------------+---------------------------------------------------------------
+           . |        207         .  -1409.253       6    2830.506   2850.502
+-----------------------------------------------------------------------------
+               Note: N=207 used in calculating BIC.
+
+. // Gives error message for LRT
+. //estimates store FitRL2CohAge     // Save for LRT
+. //lrtest FitRL2CohAge FitRLCohAge  // LRT for random linear baseline age slope        
+.           
+.           
+. display "Model 4b Time: Add Random Linear AgeCoh to Model 3b -- extra iterations"
+Model 4b Time: Add Random Linear AgeCoh to Model 3b -- extra iterations
+
+. mixed recall c.time c.timesq c.aget084 c.aget084sq c.tvage84#c.aget084, ///
+>              || personid: time aget084, mle nolog emiterate(100) covariance(unstructured)
+
+Mixed-effects ML regression                     Number of obs     =        557
+Group variable: personid                        Number of groups  =        207
+
+                                                Obs per group:
+                                                              min =          1
+                                                              avg =        2.7
+                                                              max =          5
+
+                                                Wald chi2(5)      =      20.47
+Log likelihood =  -1409.253                     Prob > chi2       =     0.0010
+
+-------------------------------------------------------------------------------------
+             recall |      Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+--------------------+----------------------------------------------------------------
+               time |   .3135834   .1123693     2.79   0.005     .0933437    .5338231
+             timesq |  -.0455585   .0149707    -3.04   0.002    -.0749006   -.0162165
+            aget084 |  -.2974395   .1053803    -2.82   0.005     -.503981    -.090898
+          aget084sq |  -.0351879   .0268437    -1.31   0.190    -.0878005    .0174248
+                    |
+c.tvage84#c.aget084 |   .0447104    .020784     2.15   0.031     .0039745    .0854463
+                    |
+              _cons |    9.33669   .3540657    26.37   0.000     8.642734    10.03065
+-------------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+  Random-effects Parameters  |   Estimate   Std. Err.     [95% Conf. Interval]
+-----------------------------+------------------------------------------------
+personid: Unstructured       |
+                   var(time) |   .1269922    .043199      .0651964    .2473607
+                var(aget084) |   .0005876   .0075139      7.65e-15    4.51e+07
+                  var(_cons) |   12.53216   1.637893      9.700139    16.19101
+           cov(time,aget084) |  -.0085308   .0550702     -.1164663    .0994048
+             cov(time,_cons) |  -.6000931   .2283879     -1.047725   -.1524611
+          cov(aget084,_cons) |   .0520171    .290053     -.5164764    .6205106
+-----------------------------+------------------------------------------------
+               var(Residual) |   3.941339   .3597755      3.295671    4.713501
+------------------------------------------------------------------------------
+LR test vs. linear model: chi2(6) = 238.31                Prob > chi2 = 0.0000
+
+Note: LR test is conservative and provided only for reference.
+
+. estat recovariance, relevel(personid) correlation  // GCORR matrix
+
+Random-effects correlation matrix for level personid
+
+             |      time    aget084      _cons 
+-------------+---------------------------------
+        time |         1                       
+     aget084 | -.9875708          1            
+       _cons | -.4756824   .6061784          1 
+
+. display "-2LL = " e(ll)*-2       // Print -2LL for model  
+-2LL = 2818.506
+
+. estat ic, n(207)                 // Information criteria at N=# persons
+
+Akaike's information criterion and Bayesian information criterion
+
+-----------------------------------------------------------------------------
+       Model |        Obs  ll(null)  ll(model)      df         AIC        BIC
+-------------+---------------------------------------------------------------
+           . |        207         .  -1409.253      13    2844.506   2887.831
+-----------------------------------------------------------------------------
+               Note: N=207 used in calculating BIC.
+
+. estimates store FitRL2CohTim     // Save for LRT
+
+. lrtest FitRL2CohTim FitRLCohTim  // LRT for random linear baseline age slope                              
+
+Likelihood-ratio test                                 LR chi2(3)  =      0.04
+(Assumption: FitRLCohTim nested in FitRL2CohTim)      Prob > chi2 =    0.9980
+
+Note: The reported degrees of freedom assumes the null hypothesis is not on the boundary of the parameter space.  If this is not true, then the
+      reported test is conservative.
+
+.           
+.           
+. // Close external file of saved results
+.    log close
+      name:  <unnamed>
+       log:  C:\Dropbox\23_PSQF7375_AdvLong\PSQF7375_AdvLong_Example2\AdvLong_Example2_STATA_Output.log
+  log type:  text
+ closed on:  24 Jan 2023, 08:54:45
+------------------------------------------------------------------------------------------------------------------------------------------------------
